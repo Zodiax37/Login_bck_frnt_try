@@ -1,0 +1,50 @@
+//############# PROVEEDOR ######################################## 
+# GET http://localhost:3000/api/proveedores
+
+
+# GET http://localhost:3000/api/proveedores/2
+
+
+# POST http://localhost:3000/api/proveedores
+# Content-Type: application/json
+
+# {
+#   "Nombre": "Proveedor Nuevo",
+#   "Contacto": "Juan Pérez",
+#   "Estado": "Activo"
+# }
+
+# PUT http://localhost:3000/api/proveedores/2
+# Content-Type: application/json
+
+# {
+#   "Nombre": "Proveedor Actualizado",
+#   "Contacto": "María López",
+#   "Estado": "Activo"
+# }
+
+# DELETE http://localhost:3000/api/proveedores/1
+
+
+
+//############# Categoria
+
+# put http://localhost:3000/api/categorias/1
+# Content-Type: application/json
+
+# {
+#   "Nombre": "CAamara",
+#   "Descripcion": "Graba y esas cosas"
+# }
+
+get http://localhost:3000/api/existencias
+
+
+Post http://localhost:3000/api/existencias
+Content-Type: application/json
+
+{
+  "ProductoId": 1,
+  "CantidadActual": 10,
+  "UmbralMinimo": 5
+}

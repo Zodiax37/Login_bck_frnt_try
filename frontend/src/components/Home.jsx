@@ -4,7 +4,7 @@ import { BodyHome } from "./BodyHome.jsx"
 
 function Home() {
     return (
-        <div className="container mt-5">
+        <div className="">
             <h1>Bienvenido Bienvenida</h1>
             <p>Has iniciado sesión correctamente.</p>
             <BodyHome />
