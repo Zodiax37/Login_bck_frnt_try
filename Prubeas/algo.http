@@ -37,14 +37,17 @@
 #   "Descripcion": "Graba y esas cosas"
 # }
 
-get http://localhost:3000/api/existencias
+get http://localhost:3000/api/categorias
 
 
-Post http://localhost:3000/api/existencias
+put http://localhost:3000/api/productos/1
 Content-Type: application/json
 
 {
-  "ProductoId": 1,
-  "CantidadActual": 10,
-  "UmbralMinimo": 5
+  
+    "Nombre": "Holder pro",
+    "Costo": 10.5,
+    "PrecioVenta": 15.4,
+    "CategoriaId": 2,
+    "ProveedorId": 2
 }

@@ -1,18 +1,14 @@
 // App.js
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './components/FormLogin';
-import Home from './components/Home'; // página de inicio (puedes crearla)
+import { BrowserRouter as Router, Routes, Route, RouterProvider } from 'react-router-dom';
+import { router } from "./routes"; 
+
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/inicio" element={<Home />} />
-      </Routes>
-    </Router>
-  );
+    <RouterProvider router={router}/>
+    );
 }
 
 export default App;
+//Node.js sin ORM Modelador 

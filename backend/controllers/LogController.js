@@ -20,7 +20,7 @@ const login = async (req, res) => {
         const result = await pool
             .request()
             .input("userName", sql.VarChar, userName)
-            .query("SELECT * FROM users WHERE userName = @userName");
+            .query("");
 
         if (result.recordset.length > 0) {
             const user = result.recordset[0];
