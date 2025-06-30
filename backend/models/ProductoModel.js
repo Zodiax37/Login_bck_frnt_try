@@ -1,45 +1,53 @@
-const { getConnection, sql } = require("../connection");
+const { getConnectionByRole, sql } = require("../connection");
 
 
-async function getProductos(){
-    const pool = await getConnection();
-    const result = await pool.request().query("SELECT * FROM Productos")
-    return result.recordset
+async function getProductos(role) {
+    const pool = await getConnectionByRole(role);
+    const result = await pool.request().query('EXEC sp_ListarProductos');
+    return result.recordset;
 }
 
-async function getProducto(id){
-    const pool = await getConnection();
-    const result = await pool.request().input("Id", sql.Int, id).query("SELECT * FROM Productos WHERE Id = @Id")
+
+async function getProducto(role, id) {
+    const pool = await getConnectionByRole(role);
+    const result = await pool.request().input("Id", sql.Int, id).query("EXEC sp_TraerProducto @Id")
     return result.recordset[0];
 }
 
-async function postProducto(data){
-    const pool = await getConnection();
-    const {Nombre, Costo, PrecioVenta, CategoriaId, ProveedorId} = data
-    await pool.request().input("Nombre",sql.VarChar,Nombre)
-    .input("Costo",sql.Decimal(10,2) , Costo)
-    .input("PrecioVenta", sql.Decimal(10,2),PrecioVenta)
-    .input("CategoriaId", sql.Int,CategoriaId)
-    .input("ProveedorId", sql.Int,ProveedorId)
-    .query("INSERT INTO Productos (Nombre, Costo, PrecioVenta, CategoriaId, ProveedorId) values (@Nombre, @Costo, @PrecioVenta, @CategoriaId, @ProveedorId)")
-} 
+async function postProducto(role, data) {
+    const pool = await getConnectionByRole(role);
+    const { Nombre, Descripcion, Costo, PrecioVenta, ImagenUrl,  CategoriaId, ProveedorId,CantidadInicial,UmbralMinimo } = data
+    await pool.request().input("Nombre", sql.NVarChar, Nombre)
+        .input("Descripcion", sql.Text, Descripcion)
+        .input("Costo", sql.Decimal(10, 2), Costo)
+        .input("PrecioVenta", sql.Decimal(10, 2), PrecioVenta)
+        .input("ImgUrl", sql.NVarChar, ImagenUrl)
+        .input("CategoriaId", sql.Int, CategoriaId)
+        .input("ProveedorId", sql.Int, ProveedorId)
+        .input("CantInit", sql.Int, CantidadInicial)
+        .input("Umbral", sql.Int, UmbralMinimo)
+        .query("EXEC sp_CrearProducto @Nombre, @Descripcion, @Costo, @PrecioVenta, @ImgUrl, @CategoriaId, @ProveedorId, @CantInit, @Umbral ")
+}
 
-async function updateProducto(id, data){
-    const pool = await getConnection();
-    const {Nombre, Costo, PrecioVenta, CategoriaId, ProveedorId} = data
+async function updateProducto(role, id, data) {
+    const pool = await getConnectionByRole(role);
+    const { Nombre, Descripcion, Costo, PrecioVenta, ImagenUrl, Estado,CategoriaId, ProveedorId } = data
     await pool.request().input("Id", sql.Int, id)
-    .input("Nombre",sql.VarChar,Nombre)
-    .input("Costo",sql.Decimal(10, 2) , Costo)
-    .input("PrecioVenta", sql.Decimal(10, 2),PrecioVenta)
-    .input("CategoriaId", sql.Int,CategoriaId)
-    .input("ProveedorId", sql.Int,ProveedorId)
-    .query("Update Productos SET Nombre=@Nombre, Costo= @Costo, PrecioVenta=@PrecioVenta, CategoriaId=@CategoriaId, ProveedorId=@ProveedorId  WHERE Id = @Id")
-} 
+        .input("Nombre", sql.NVarChar, Nombre)
+        .input("Descripcion", sql.Text, Descripcion)
+        .input("Costo", sql.Decimal(10, 2), Costo)
+        .input("PrecioVenta", sql.Decimal(10, 2), PrecioVenta)
+        .input("ImgUrl", sql.NVarChar, ImagenUrl)
+        .input("Estado", sql.Bit, Estado)
+        .input("CategoriaId", sql.Int, CategoriaId)
+        .input("ProveedorId", sql.Int, ProveedorId)
+        .query("EXEC sp_ActualizarProducto @Id, @Nombre, @Descripcion, @Costo, @PrecioVenta, @ImgUrl, @Estado, @CategoriaId, @ProveedorId")
+}
 
 
-async function deleteProducto(id){
-    const pool = await getConnection();
-    await pool.request().input("Id", sql.Int, id).query("Delete from Productos WHERE Id=@Id")
+async function deleteProducto(role, id) {
+    const pool = await getConnectionByRole(role);
+    await pool.request().input("Id", sql.Int, id).query("EXEC sp_EliminarProducto @Id")
 }
 
 

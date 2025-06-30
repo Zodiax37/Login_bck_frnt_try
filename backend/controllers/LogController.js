@@ -1,4 +1,8 @@
-const { getConnection, sql } = require("../connection");
+const { getConnection, sql, getConnectionByRole } = require("../connection");
+const jwt = require('jsonwebtoken');
+
+const LoginModel = require("../models/LoginModel");
+
 
 const loginIntentos = {};
 
@@ -16,20 +20,34 @@ const login = async (req, res) => {
     }
 
     try {
-        const pool = await getConnection();
-        const result = await pool
-            .request()
-            .input("userName", sql.VarChar, userName)
-            .query("");
+        const user = await LoginModel.loginUsuario(userName, pass)
 
-        if (result.recordset.length > 0) {
-            const user = result.recordset[0];
+        if (user){
+            loginIntentos[userName] = { attemps: 0, blocked: false };
 
-            if (user.Pass === pass) {
-                loginIntentos[userName] = { attemps: 0, blocked: false };
-                return res.json({ message: "Inicio de sesión exitoso" });
-            }
+                const token = jwt.sign(
+                    {
+                        id: user.Id,
+                        userName: user.Username,
+                        rol: user.Rol, // debe venir en la tabla: 'Ventas', 'Inventario', 'admin'
+                    },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '1h' }
+                );
+
+                return res.json({ message: "Inicio de sesión exitoso", token });
         }
+
+        // if (result.recordset.length > 0) {
+        //     const user = result.recordset[0];
+
+
+            // if (user.Pass === pass) {
+               
+
+               
+            // }
+        // }
 
         // Manejo de intentos fallidos
         if (!loginIntentos[userName]) {
@@ -42,6 +60,8 @@ const login = async (req, res) => {
         }
 
         return res.status(401).json({ error: "Usuario o contraseña incorrecta" });
+
+
     } catch (err) {
         console.error("Error en el login:", err);
         return res.status(500).json({ error: "Error interno del servidor" });

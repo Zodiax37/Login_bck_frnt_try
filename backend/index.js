@@ -1,6 +1,9 @@
 const express = require("express");
 const cors = require('cors');
-const { getConnection, sql } = require("./connection");
+require('dotenv').config();
+
+
+const { getConnectionByRole, sql } = require("./connection");
 
 const app = express();
 const PORT = 3000;
@@ -24,13 +27,17 @@ app.use('/api/categorias', CategoryRoutes)
 app.use('/api/productos', ProdRoutes)
 app.use('/api/existencias', ExistRoutes)
 
+//FALTA PONER BIEN LOS ROLES DE VENTA, INV, ADMIN Y CREARLES EN SQL
 app.get("/", async (req, res) => {
     try {
-        const pool = await getConnection();
+        const pool = await getConnectionByRole('ventas');
         // Prueba rápida: hacer una consulta simple
-        const result = await pool.request().query("SELECT * from users");
+        const result = await pool.request().query("SELECT * from Usuarios");
+        // console.log("sepudo");
+        
         res.json(result.recordset);
     } catch (error) {
+        console.error("Error en ruta /:", error);
         res.status(500).send("Error en la base de datos");
     }
 });

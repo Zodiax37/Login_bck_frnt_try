@@ -1,14 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const auth = require("../middlewares/auth")
 
 
 const ExistenciaController = require("../controllers/ExistenciaController")
 
-router.get("/", ExistenciaController.getAll)
-router.get("/:id", ExistenciaController.getById)
-router.post("/", ExistenciaController.create)
-router.put("/:id", ExistenciaController.update)
-router.delete("/:id", ExistenciaController.erase_delete)
+router.get("/", auth, ExistenciaController.getAll)
+router.get("/:id", auth, ExistenciaController.getById)
+router.post("/", auth, ExistenciaController.createMovimiento)
 
 module.exports=router
 
