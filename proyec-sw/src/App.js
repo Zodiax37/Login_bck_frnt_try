@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { logout } from './utils/auth';
 
 import Home from './pages/Home';
 import RegistroProducto from './pages/RegistroProducto';
@@ -14,6 +15,9 @@ import GenerarReporte from './pages/GenerarReporte';
 import Usuarios from './pages/Usuarios';
 import Configuracion from './pages/Configuracion';
 import Login from './pages/Login';
+import CrearUserForm from './pages/CrearUserForm';
+import CatalogoProductos from './pages/CatalogoProducto';
+import PreventaPage from './pages/PreventaPage';
 
 function App() {
   const [sidebarAbierto, setSidebarAbierto] = useState(true);
@@ -36,7 +40,10 @@ function App() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('logueado');
+    logout();
+    localStorage.removeItem('sidebarMotoMan')
+    
+    localStorage.removeItem('username')
     setLogueado(false);
   };
 
@@ -44,7 +51,7 @@ function App() {
     <Router>
       {logueado ? (
         <div className="d-flex">
-          <Sidebar isCollapsed={!sidebarAbierto} toggleSidebar={toggleSidebar} />
+          <Sidebar rol={localStorage.getItem('rol')} isCollapsed={!sidebarAbierto} toggleSidebar={toggleSidebar} />
           <div
             className="flex-grow-1"
             style={{
@@ -81,7 +88,11 @@ function App() {
                 <Route path="/registrar-venta" element={<RegistrarVenta />} />
                 <Route path="/reportes" element={<GenerarReporte />} />
                 <Route path="/usuarios" element={<Usuarios />} />
+                <Route path="crear-usuario" element={<CrearUserForm />}/>
                 <Route path="/configuracion" element={<Configuracion />} />
+                <Route path='/productos/catalogo' element={<CatalogoProductos />}/>
+                <Route path="/preventa" element={<PreventaPage />} />
+
                 <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </div>

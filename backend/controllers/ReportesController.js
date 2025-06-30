@@ -50,10 +50,22 @@ async function productosMasVendidos(req, res) {
     }
 }
 
+async function ResumenDashBoard(req, res) {
+    try {
+      
+        const data = await ReporteModel.getResumenDashboard(req.user.rol);
+        res.json(data);
+    } catch (e) {
+         console.error("Error en ResumenDashBoard:", e);
+        res.status(500).json({ message: "Error al obtener productos más vendidos", error: e.message });
+    }
+}
+
 module.exports = {
     ventasPorFecha,
     detalleVenta,
     listadoVentas,
     ventasPorMetodoPago,
-    productosMasVendidos
+    productosMasVendidos,
+    ResumenDashBoard
 };

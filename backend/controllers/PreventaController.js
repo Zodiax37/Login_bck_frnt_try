@@ -15,6 +15,8 @@ async function agregarProducto(req, res) {
         await PreventaModel.agregarProducto(req.user.rol, preventaId, productoId, cantidad);
         res.json({ message: "Producto agregado a preventa" });
     } catch (e) {
+
+        console.error('Error en agregarProducto:', e);
         res.status(500).json({ message: "Error al agregar producto", error: e.message });
     }
 }

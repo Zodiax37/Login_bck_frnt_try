@@ -1,12 +1,8 @@
+// src/pages/Login.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Login.css'; // 
-
-// Lista de usuarios simulados
-const usuariosValidos = [
-  { username: 'admin', password: '1234' },
-  { username: 'juan', password: 'abcd' },
-];
+import API from '../api/axios'; // 👈 importar tu instancia de Axios
+import './Login.css';
 
 export default function Login({ onLogin }) {
   const [username, setUsername] = useState('');
@@ -15,71 +11,84 @@ export default function Login({ onLogin }) {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    const usuarioValido = usuariosValidos.find(
-      (u) => u.username === username && u.password === password
-    );
+    try {
 
-    if (usuarioValido) {
+      const res = await API.post('/login', {
+        userName: username,
+        pass: password
+      });
+
+      const { token } = res.data;
+      const payload = JSON.parse(atob(token.split('.')[1])); // Decodifica el payload del JWT
+
+      localStorage.setItem('token', token);
       localStorage.setItem('logueado', 'true');
-      onLogin(); // informa al App.js que se ha iniciado sesión
-      navigate('/', { replace: true }); // redirige al Home
-    } else {
+      localStorage.setItem('rol', payload.rol); // ejemplo: 'admin', 'Ventas', etc.
+      localStorage.setItem('username', payload.username);
+      localStorage.setItem('userId', payload.id);
+
+      onLogin(); // actualiza el estado del App
+      navigate('/', { replace: true });
+
+    } catch (err) {
       const nuevosIntentos = intentos + 1;
       setIntentos(nuevosIntentos);
 
-      if (nuevosIntentos >= 3) {
-        setError('Acceso bloqueado por exceso de intentos');
+      if (err.response?.status === 403) {
+        setError("Usuario bloqueado temporalmente");
+      } else if (err.response?.status === 401) {
+        setError("Usuario o contraseña incorrecta");
       } else {
-        setError('Credenciales incorrectas');
+        setError("Error al iniciar sesión");
       }
     }
   };
 
   return (
-  <div className="login-container">
-    <div className="login-box">
-      
-      {/* Panel izquierdo de bienvenida */}
-      <div className="left-panel">
-        <h2>MotoMan</h2>
-        <p>Gestión moderna de inventario y ventas</p>
-      </div>
+    <div className="login-container">
+      <div className="login-box">
+        <div className="left-panel">
+          <h2>MotoMan</h2>
+          <p>Gestión moderna de inventario y ventas</p>
+        </div>
 
-      {/* Panel derecho con el formulario */}
-      <div className="right-panel">
-        <h4>Iniciar sesión</h4>
-        <form onSubmit={handleLogin}>
-          <input
-            type="text"
-            placeholder="Usuario"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            disabled={intentos >= 3}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={intentos >= 3}
-            required
-          />
-          {error && <small className="text-danger">{error}</small>}
-          <button
-            type="submit"
-            className="btn btn-primary w-100 mt-2"
-            disabled={intentos >= 3}
-          >
-            LOGIN
-          </button>
-        </form>
+        <div className="right-panel">
+          <div className='d-flex justify-content-center mb-2'>
+            <h4 className='h2'>Iniciar sesión</h4>
+          </div>
+          <form className="gap-3" onSubmit={handleLogin}>
+            <input
+              type="text"
+              placeholder="Usuario"
+              className="form-control border border-dark mb-4"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              disabled={intentos >= 3}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Contraseña"
+              className='form-control border border-dark mb-3'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={intentos >= 3}
+              required
+            />
+            {error && <small className="text-danger">{error}</small>}
+            <button
+              type="submit"
+              className="btn btn-primary w-100 mt-2"
+              disabled={intentos >= 3}
+            >
+              LOGIN
+            </button>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
-);
-
+  );
 }

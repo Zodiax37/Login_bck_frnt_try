@@ -8,5 +8,6 @@ router.get("/detalle-venta/:id", auth, ReporteController.detalleVenta);
 router.get("/listado", auth, ReporteController.listadoVentas);
 router.get("/por-metodo", auth, ReporteController.ventasPorMetodoPago);
 router.get("/mas-vendidos", auth, ReporteController.productosMasVendidos);
+router.get("/resumen-dash", auth, ReporteController.ResumenDashBoard);
 
 module.exports = router;

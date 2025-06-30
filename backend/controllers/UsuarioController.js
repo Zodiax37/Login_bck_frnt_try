@@ -17,6 +17,7 @@ async function getAll(req,res){
 async function getById(req,res){
     try {
         const id = parseInt(req.params.id)
+
         const data = await UsuarioModel.getUsuario(req.user.rol, id)
         data? res.json(data) : res.status(404).json({message: "Usuario no encontrado"})
         
@@ -28,9 +29,15 @@ async function getById(req,res){
 
 async function create(req, res){
     try {
-        await UsuarioModel.postUsuario(req.user.rol, req.body)
+        //TEMPORAL
+        const rol = req.user?.rol || 'admin'; // usar 'admin' si no hay auth
+        await UsuarioModel.postUsuario(rol /*req.user.rol*/, req.body)
+        //==========================================
         res.status(201).json({message:"Usuario Creado Correctamente"})
     } catch (e) {
+          console.error("❌ Error al crear usuario:", e); // esto es lo que queremos ver
+          
+          
                 res.status(500).json({message:"Error al Crear Usuario", error: e.message})
 
     }

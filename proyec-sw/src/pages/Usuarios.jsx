@@ -1,4 +1,9 @@
+import { useNavigate } from 'react-router-dom';
+
+
 export default function Usuarios() {
+const navigate = useNavigate();
+
   const usuarios = [
     { id: 1, nombre: 'Juan Pérez', rol: 'Administrador', estado: 'Activo' },
     { id: 2, nombre: 'María López', rol: 'Vendedor', estado: 'Inactivo' }
@@ -6,6 +11,9 @@ export default function Usuarios() {
 
   return (
     <div className="container p-4">
+      <div className="d-flex align-items-end flex-column bd-highlight mb-3">
+        <button className="btn btn-success" type="button" onClick={() => navigate('/crear-usuario')}>Añadir Usuario</button>
+      </div>
       <h2>Gestión de Usuarios</h2>
       <table className="table table-striped">
         <thead>

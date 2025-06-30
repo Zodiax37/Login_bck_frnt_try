@@ -1,10 +1,10 @@
 const { getConnectionByRole, sql } = require("../connection");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
-async function loginUsuario(correo, password) {
+async function loginUsuario(username, password) {
     const pool = await getConnectionByRole("lector"); // o 'login', si tienes uno limitado
     const result = await pool.request()
-        .input("Username", sql.NVarChar, correo)
+        .input("Username", sql.NVarChar, username)
         .query("SELECT u.Id, u.Username, u.Rol, u.Password FROM Usuarios u WHERE u.Username = @Username AND u.Estado = 1");
 
     const user = result.recordset[0];

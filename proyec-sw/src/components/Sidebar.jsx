@@ -1,17 +1,66 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import './Sidebar.css';
 
-export default function Sidebar({ isCollapsed, toggleSidebar }) {
+export default function Sidebar({ isCollapsed, toggleSidebar, rol }) {
   const location = useLocation();
+  const [openSections, setOpenSections] = useState({});
+
+  const toggleSection = (label) => {
+    setOpenSections((prev) => ({ ...prev, [label]: !prev[label] }));
+  };
 
   const navItems = [
-    { label: 'Inicio', path: '/', icon: 'bi-house-door-fill' },
-    { label: 'Gestión de Productos', path: '/registrar-producto', icon: 'bi-box-seam' },
-    { label: 'Ingreso de Existencias', path: '/ingresar-inventario', icon: 'bi-box-arrow-in-down' },
-    { label: 'Ventas y Facturación', path: '/registrar-venta', icon: 'bi-receipt' },
-    { label: 'Reportes', path: '/reportes', icon: 'bi-bar-chart-line-fill' },
-    { label: 'Usuarios y Roles', path: '/usuarios', icon: 'bi-people-fill' },
-    { label: 'Configuración', path: '/configuracion', icon: 'bi-gear-fill' },
+    {
+      label: 'Inicio',
+      icon: 'bi-house-door-fill',
+      path: '/',
+      roles: ['admin', 'ventas', 'inventario']
+    },
+    {
+      label: 'Productos',
+      icon: 'bi-box-seam',
+      roles: ['admin', 'inventario'],
+      children: [
+        { label: 'Catálogo', path: '/productos/catalogo' },
+        { label: 'Registrar Producto', path: '/productos/registrar' },
+        { label: 'Registrar Entrada', path: '/productos/ingresar' },
+        { label: 'Movimientos', path: '/productos/movimientos' }
+      ]
+    },
+    {
+      label: 'Ventas',
+      icon: 'bi-cart-fill',
+      roles: ['admin', 'ventas'],
+      children: [
+        { label: 'Catálogo Preventa', path: '/ventas/catalogo-preventa' },
+        { label: 'Mis Preventas', path: '/ventas/preventas' },
+        { label: 'Registrar Venta', path: '/ventas/registrar' },
+        { label: 'Facturación', path: '/ventas/facturacion' }
+      ]
+    },
+    {
+      label: 'Reportes',
+      icon: 'bi-bar-chart-line-fill',
+      path: '/reportes',
+      roles: ['admin', 'ventas']
+    },
+    {
+      label: 'Usuarios y Roles',
+      icon: 'bi-people-fill',
+      roles: ['admin'],
+      children: [
+        { label: 'Usuarios', path: '/usuarios' },
+        { label: 'Empleados', path: '/empleados' },
+        { label: 'Personas', path: '/personas' }
+      ]
+    },
+    {
+      label: 'Configuración',
+      icon: 'bi-gear-fill',
+      path: '/configuracion',
+      roles: ['admin']
+    }
   ];
 
   return (
@@ -22,28 +71,72 @@ export default function Sidebar({ isCollapsed, toggleSidebar }) {
         position: 'fixed',
         overflowX: 'hidden',
         transition: 'width 0.3s ease',
+        zIndex: 1000
       }}
     >
-
       <ul className="nav flex-column p-3">
-        {navItems.map((item, index) => (
-          <li className="nav-item mb-2" key={index}>
-            <Link
-              to={item.path}
-              className={`nav-link d-flex align-items-center ${
-                location.pathname === item.path
-                  ? 'active text-primary fw-bold'
-                  : 'text-dark'
-              }`}
-              title={isCollapsed ? item.label : ''}
-            >
-              <i className={`bi ${item.icon} me-2 fs-5`}></i>
-              {!isCollapsed && <span>{item.label}</span>}
-            </Link>
-          </li>
-        ))}
+        {navItems.map((item, index) => {
+          if (!item.roles.includes(rol)) return null;
+
+          const isOpen = openSections[item.label];
+
+          if (item.children) {
+            return (
+              <li key={index} className="nav-item mb-2">
+                <div
+                  className="nav-link d-flex align-items-center justify-content-between text-dark cursor-pointer"
+                  onClick={() => toggleSection(item.label)}
+                >
+                  <div className="d-flex align-items-center">
+                    <i className={`bi ${item.icon} me-2 fs-5`} />
+                    {!isCollapsed && <span>{item.label}</span>}
+                  </div>
+                  {!isCollapsed && (
+                    <i className={`bi ${isOpen ? 'bi-chevron-up' : 'bi-chevron-down'}`} />
+                  )}
+                </div>
+
+                {/* Submenú con clase animada */}
+                <ul
+                  className={`nav flex-column ms-2 submenu ${isCollapsed ? 'closed' : isOpen ? 'open' : 'closed'}`}
+                >
+                  {item.children.map((subItem, subIndex) => (
+                    <li key={subIndex} className="sidebar-subitem">
+                      <Link
+                        to={subItem.path}
+                        className={`nav-link ${
+                          location.pathname === subItem.path
+                            ? 'active text-primary fw-bold'
+                            : 'text-dark'
+                        }`}
+                      >
+                        {subItem.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            );
+          } else {
+            return (
+              <li key={index} className="nav-item mb-2">
+                <Link
+                  to={item.path}
+                  className={`nav-link d-flex align-items-center ${
+                    location.pathname === item.path
+                      ? 'active text-primary fw-bold'
+                      : 'text-dark'
+                  }`}
+                  title={isCollapsed ? item.label : ''}
+                >
+                  <i className={`bi ${item.icon} me-2 fs-5`} />
+                  {!isCollapsed && <span>{item.label}</span>}
+                </Link>
+              </li>
+            );
+          }
+        })}
       </ul>
     </div>
   );
 }
-

@@ -1,5 +1,5 @@
 const {getConnectionByRole, sql} = require("../connection");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 
 
@@ -30,7 +30,7 @@ async function postUsuario(role, data){
     .input("Username", sql.NVarChar, Username)
     .input("PasswordH", sql.NVarChar, hash)
     .input("Rol", sql.NVarChar, Rol)
-    .query("EXEC sp_CrearUsuario @Username, @PasswordH, @Rol")
+    .query("EXEC sp_CrearUsuario @EmpleadoId, @Username, @PasswordH, @Rol")
 }
 
 async function updateUsuario(role, id, data){

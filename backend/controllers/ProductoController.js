@@ -6,6 +6,8 @@ async function getAll(req, res) {
         const data = await ProductoModel.getProductos(req.user.rol);
         res.json(data);
     } catch (e) {
+        console.log("error", e);
+        
         res.status(500).json({ message: 'Error al cargar productos', error: e.message });
     }
 }

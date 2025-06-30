@@ -27,14 +27,15 @@ const login = async (req, res) => {
 
                 const token = jwt.sign(
                     {
-                        id: user.Id,
-                        userName: user.Username,
-                        rol: user.Rol, // debe venir en la tabla: 'Ventas', 'Inventario', 'admin'
+                        id: user.id,
+                        username: user.username,
+                        rol: user.rol, // debe venir en la tabla: 'Ventas', 'Inventario', 'admin'
                     },
                     process.env.JWT_SECRET,
                     { expiresIn: '1h' }
                 );
-
+                console.log(user.rol);
+                
                 return res.json({ message: "Inicio de sesión exitoso", token });
         }
 

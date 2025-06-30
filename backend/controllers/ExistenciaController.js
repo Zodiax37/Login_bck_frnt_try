@@ -36,7 +36,7 @@ module.exports = { getAll,getById,createMovimiento };
 
 
 //#region 
-a
+
 // async function getAll(req, res) {
 //     try {
 //         const data = await ExistenciaModel.getExistencias()

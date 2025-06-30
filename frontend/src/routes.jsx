@@ -8,8 +8,8 @@ import {
 
 
 
-import Login from './components/FormLogin';
-import Home from './components/Home'; // página de inicio (puedes crearla)
+import Login from './components copy/FormLogin';
+import Home from './components copy/Home'; // página de inicio (puedes crearla)
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
