@@ -32,6 +32,10 @@ export const obtenerProductosDePreventa = async (preventaId) => {
     return res.data;
 };
 
+export const obtenerPreventasPendientes = async (usuarioId) => {
+    const res = await API.get(`/preventas/pendientes/${usuarioId}`);
+    return res.data;
+};
 // Confirmar una preventa y generar la venta
 export const confirmarVenta = async (data) => {
     const res = await API.post('/preventas/confirmar', data);

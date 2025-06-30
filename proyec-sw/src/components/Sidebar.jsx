@@ -33,8 +33,8 @@ export default function Sidebar({ isCollapsed, toggleSidebar, rol }) {
       icon: 'bi-cart-fill',
       roles: ['admin', 'ventas'],
       children: [
-        { label: 'Catálogo Preventa', path: '/ventas/catalogo-preventa' },
-        { label: 'Mis Preventas', path: '/ventas/preventas' },
+        
+        { label: 'Mis Preventas', path: '/seleccionar-preventa' },
         { label: 'Registrar Venta', path: '/ventas/registrar' },
         { label: 'Facturación', path: '/ventas/facturacion' }
       ]

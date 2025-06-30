@@ -41,6 +41,19 @@ async function listarProductos(req, res) {
     }
 }
 
+async function listarPreventasPendientes(req, res) {
+    try {
+        const userId = parseInt(req.params.usuarioId);
+        const productos = await PreventaModel.listarPreventasPendientes(req.user.rol, userId);
+        res.json(productos);
+    } catch (e) {
+        res.status(500).json({ message: "Error al listar productos", error: e.message });
+    }
+}
+
+
+
+
 async function confirmarVenta(req, res) {
     try {
         const datos = {
@@ -50,6 +63,8 @@ async function confirmarVenta(req, res) {
         await PreventaModel.confirmarVenta(req.user.rol, datos);
         res.json({ message: "Venta confirmada exitosamente" });
     } catch (e) {
+        console.log(e);
+        
         res.status(500).json({ message: "Error al confirmar venta", error: e.message });
     }
 }
@@ -59,5 +74,6 @@ module.exports = {
     agregarProducto,
     quitarProducto,
     listarProductos,
-    confirmarVenta
+    confirmarVenta,
+    listarPreventasPendientes
 };

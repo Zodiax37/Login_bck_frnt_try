@@ -18,6 +18,7 @@ import Login from './pages/Login';
 import CrearUserForm from './pages/CrearUserForm';
 import CatalogoProductos from './pages/CatalogoProducto';
 import PreventaPage from './pages/PreventaPage';
+import PreventasPendientes from "./pages/PreventasPendientes"
 
 function App() {
   const [sidebarAbierto, setSidebarAbierto] = useState(true);
@@ -42,8 +43,12 @@ function App() {
   const handleLogout = () => {
     logout();
     localStorage.removeItem('sidebarMotoMan')
-    
+
     localStorage.removeItem('username')
+
+    localStorage.removeItem('userId')
+
+    localStorage.removeItem('preventaId')
     setLogueado(false);
   };
 
@@ -88,9 +93,10 @@ function App() {
                 <Route path="/registrar-venta" element={<RegistrarVenta />} />
                 <Route path="/reportes" element={<GenerarReporte />} />
                 <Route path="/usuarios" element={<Usuarios />} />
-                <Route path="crear-usuario" element={<CrearUserForm />}/>
+                <Route path="crear-usuario" element={<CrearUserForm />} />
                 <Route path="/configuracion" element={<Configuracion />} />
-                <Route path='/productos/catalogo' element={<CatalogoProductos />}/>
+                <Route path='/productos/catalogo' element={<CatalogoProductos />} />
+                <Route path="/seleccionar-preventa" element={<PreventasPendientes />} />
                 <Route path="/preventa" element={<PreventaPage />} />
 
                 <Route path="*" element={<Navigate to="/" />} />
