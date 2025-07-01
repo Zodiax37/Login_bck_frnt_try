@@ -87,7 +87,11 @@ export default function ProductoCard({ producto }) {
                     </li>
                 </ul>
 
-                <div className="d-flex justify-content-between mt-3 flex-wrap gap-2">
+
+
+
+                {(rol === 'admin' || rol === 'inventario') && (
+                    <div className="d-flex justify-content-between mt-3 flex-wrap gap-2">
                     <Link to={`/productos/editar/${producto.Id}`} className="btn btn-outline-primary btn-sm">
                         Editar
                     </Link>
@@ -95,6 +99,10 @@ export default function ProductoCard({ producto }) {
                         Dar de baja
                     </button>
                 </div>
+                )}
+
+
+                
 
                 {(rol === 'admin' || rol === 'ventas') && (
                     <div className="mt-3 d-flex align-items-center gap-2">

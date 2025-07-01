@@ -19,6 +19,10 @@ import CrearUserForm from './pages/CrearUserForm';
 import CatalogoProductos from './pages/CatalogoProducto';
 import PreventaPage from './pages/PreventaPage';
 import PreventasPendientes from "./pages/PreventasPendientes"
+import ListaMovimientosInventario from './pages/Movimientos/ListaMovimientosInventario';
+import RegistrarMovimientoPage from './pages/Movimientos/RegistrarMovimiento';
+import RegistrarCategoriaPage from './pages/RegistrarCategoriaPage';
+import RegistrarProveedorPage from './pages/RegistrarProveedorPage';
 
 function App() {
   const [sidebarAbierto, setSidebarAbierto] = useState(true);
@@ -88,7 +92,7 @@ function App() {
             <div className="p-4">
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/registrar-producto" element={<RegistroProducto />} />
+                <Route path="productos/registrar-producto" element={<RegistroProducto />} />
                 <Route path="/ingresar-inventario" element={<IngresoInventario />} />
                 <Route path="/registrar-venta" element={<RegistrarVenta />} />
                 <Route path="/reportes" element={<GenerarReporte />} />
@@ -96,8 +100,17 @@ function App() {
                 <Route path="crear-usuario" element={<CrearUserForm />} />
                 <Route path="/configuracion" element={<Configuracion />} />
                 <Route path='/productos/catalogo' element={<CatalogoProductos />} />
+                {/* <Route path="/preventa" element={<RegistrarProductoPage />} /> */}
                 <Route path="/seleccionar-preventa" element={<PreventasPendientes />} />
+                <Route path="/movimientos" element={<ListaMovimientosInventario />} />
+                <Route path="/registrar-movimiento" element={<RegistrarMovimientoPage />} />
                 <Route path="/preventa" element={<PreventaPage />} />
+                
+                <Route path="/categorias/registrar" element={<RegistrarCategoriaPage />} />
+
+                <Route path="/proveedores/registrar" element={<RegistrarProveedorPage />} />
+
+
 
                 <Route path="*" element={<Navigate to="/" />} />
               </Routes>

@@ -7,7 +7,7 @@ const ExistenciaController = require("../controllers/ExistenciaController")
 
 router.get("/", auth, ExistenciaController.getAll)
 router.get("/:id", auth, ExistenciaController.getById)
-router.post("/", auth, ExistenciaController.createMovimiento)
+router.post("/registrar-movimiento", auth, ExistenciaController.createMovimiento)
 
 module.exports=router
 

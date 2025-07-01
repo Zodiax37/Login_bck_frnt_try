@@ -7,6 +7,7 @@ async function getAll(req, res) {
         res.json(data);
     } catch (e) {
         console.log("error", e);
+        console.log(req.user.rol);
         
         res.status(500).json({ message: 'Error al cargar productos', error: e.message });
     }

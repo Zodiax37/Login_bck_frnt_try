@@ -23,19 +23,24 @@ export default function Sidebar({ isCollapsed, toggleSidebar, rol }) {
       roles: ['admin', 'inventario'],
       children: [
         { label: 'Catálogo', path: '/productos/catalogo' },
-        { label: 'Registrar Producto', path: '/productos/registrar' },
-        { label: 'Registrar Entrada', path: '/productos/ingresar' },
-        { label: 'Movimientos', path: '/productos/movimientos' }
+        ...(rol === 'admin'
+          ? [
+            { label: 'Registrar Producto', path: '/productos/registrar-producto' }
+          ]
+          : []),
+        
+        { label: 'Registrar Movimiento', path: '/registrar-movimiento' },
+        { label: 'Movimientos', path: '/movimientos' }
+        
       ]
+
     },
     {
       label: 'Ventas',
       icon: 'bi-cart-fill',
       roles: ['admin', 'ventas'],
       children: [
-        
         { label: 'Mis Preventas', path: '/seleccionar-preventa' },
-        { label: 'Registrar Venta', path: '/ventas/registrar' },
         { label: 'Facturación', path: '/ventas/facturacion' }
       ]
     },
@@ -104,11 +109,10 @@ export default function Sidebar({ isCollapsed, toggleSidebar, rol }) {
                     <li key={subIndex} className="sidebar-subitem">
                       <Link
                         to={subItem.path}
-                        className={`nav-link ${
-                          location.pathname === subItem.path
+                        className={`nav-link ${location.pathname === subItem.path
                             ? 'active text-primary fw-bold'
                             : 'text-dark'
-                        }`}
+                          }`}
                       >
                         {subItem.label}
                       </Link>
@@ -122,11 +126,10 @@ export default function Sidebar({ isCollapsed, toggleSidebar, rol }) {
               <li key={index} className="nav-item mb-2">
                 <Link
                   to={item.path}
-                  className={`nav-link d-flex align-items-center ${
-                    location.pathname === item.path
+                  className={`nav-link d-flex align-items-center ${location.pathname === item.path
                       ? 'active text-primary fw-bold'
                       : 'text-dark'
-                  }`}
+                    }`}
                   title={isCollapsed ? item.label : ''}
                 >
                   <i className={`bi ${item.icon} me-2 fs-5`} />

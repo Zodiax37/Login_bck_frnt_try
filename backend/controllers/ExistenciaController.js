@@ -3,7 +3,7 @@ const ExistenciaModel = require("../models/ExistenciasModel")
 
 async function getAll(req, res){
     try {
-        const data = await ExistenciaModel.getMovientos(req.user.rol);
+        const data = await ExistenciaModel.getMovimientos(req.user.rol);
         res.json(data);
     } catch (e) {
         res.status(500).json({message:"Error al traer movimientos", error:e.message})

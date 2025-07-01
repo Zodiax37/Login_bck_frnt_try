@@ -43,8 +43,8 @@ async function listarPreventasPendientes(role, usuarioId) {
     return result.recordset;
 }
 
-async function confirmarVenta(role, datos) {
-    const { PreventaId, UsuarioId, MetodoPago, Descuento, TipoFactura } = datos;
+async function confirmarVenta(role, data) {
+    const { PreventaId, UsuarioId, MetodoPago, Descuento, TipoFactura } = data;
     const pool = await getConnectionByRole(role);
     await pool.request()
         .input("PreventaId", sql.Int, PreventaId)
