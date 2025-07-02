@@ -45,14 +45,20 @@ export default function PreventaPage() {
         }
         setLoading(true);
         try {
-            await confirmarVenta({
+            const res = await confirmarVenta({
                 PreventaId: parseInt(preventaId),
                 UsuarioId: parseInt(userId),
                 MetodoPago: metodoPago,
                 Descuento: parseFloat(descuento),
                 TipoFactura: tipoFactura
             });
-            alert('Venta confirmada exitosamente');
+            
+            if (res.notificaciones?.length > 0) {
+                const mensajes = res.notificaciones.map(n => `⚠️ ${n.NombreProducto}: ${n.Mensaje}`).join('\n');
+                alert(`Venta confirmada.\n\nNotificaciones:\n${mensajes}`);
+            } else {
+                alert('Venta confirmada exitosamente');
+            }
             localStorage.removeItem('preventaId');
             setProductos([]);
         } catch (err) {

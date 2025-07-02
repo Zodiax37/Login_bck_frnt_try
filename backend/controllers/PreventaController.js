@@ -100,14 +100,21 @@ async function confirmarVenta(req, res) {
             ...req.body,
             UsuarioId: req.user.id
         };
-        await PreventaModel.confirmarVenta(req.user.rol, datos);
-        res.json({ message: "Venta confirmada exitosamente" });
+
+        const notificaciones = await PreventaModel.confirmarVenta(req.user.rol, datos);
+
+        console.log("🟡 Notificaciones generadas:", notificaciones);
+
+        res.json({
+            message: "Venta confirmada exitosamente",
+            notificaciones
+        });
     } catch (e) {
         console.log(e);
-
         res.status(500).json({ message: "Error al confirmar venta", error: e.message });
     }
 }
+
 
 module.exports = {
     crearPreventa,

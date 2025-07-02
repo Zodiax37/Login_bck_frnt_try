@@ -33,14 +33,17 @@ async function postMovimiento(role, data) {
 
     // Luego del SP, buscar si se creó una notificación
     const notificaciones = await pool.request()
-        .input("ProductoId", sql.Int, ProductoId)
-        .query(`
-      SELECT TOP 1 N.Mensaje, P.Nombre AS NombreProducto
-      FROM Notificaciones N
-      INNER JOIN Productos P ON P.Id = N.ProductoId
-      WHERE ProductoId = @ProductoId
-      ORDER BY N.Id DESC
+    .input("ProductoId", sql.Int, ProductoId)
+    .query(`
+        SELECT TOP 1 N.Mensaje, P.Nombre AS NombreProducto
+        FROM Notificaciones N
+        INNER JOIN Productos P ON P.Id = N.ProductoId
+        WHERE 
+            ProductoId = @ProductoId
+            AND N.Fecha >= DATEADD(MINUTE, -1, GETDATE())
+        ORDER BY N.Id DESC
     `);
+
 
     return notificaciones.recordset[0] || null; // null si no se creó notificación
 }
