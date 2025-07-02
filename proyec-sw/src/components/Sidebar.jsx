@@ -6,6 +6,8 @@ export default function Sidebar({ isCollapsed, toggleSidebar, rol }) {
   const location = useLocation();
   const [openSections, setOpenSections] = useState({});
 
+  const isDark = document.body.classList.contains('dark-mode');
+
   const toggleSection = (label) => {
     setOpenSections((prev) => ({ ...prev, [label]: !prev[label] }));
   };
@@ -24,19 +26,12 @@ export default function Sidebar({ isCollapsed, toggleSidebar, rol }) {
       children: [
         { label: 'Catálogo', path: '/productos/catalogo' },
         ...(rol === 'admin'
-          ? [
-            { label: 'Registrar Producto', path: '/productos/registrar-producto' }
-          ]
+          ? [{ label: 'Registrar Producto', path: '/productos/registrar-producto' }]
           : []),
-
-
         { label: 'Registrar Movimiento', path: '/registrar-movimiento' },
         { label: 'Movimientos', path: '/movimientos' }
-
       ]
-
     },
-
     {
       label: 'Productos',
       icon: 'bi-box-seam',
@@ -80,7 +75,9 @@ export default function Sidebar({ isCollapsed, toggleSidebar, rol }) {
 
   return (
     <div
-      className="bg-light vh-100 border-end shadow-sm transition-all"
+      className={`vh-100 border-end shadow-sm transition-all ${
+        isDark ? 'bg-dark text-light' : 'bg-light'
+      }`}
       style={{
         width: isCollapsed ? '60px' : '220px',
         position: 'fixed',
@@ -99,7 +96,9 @@ export default function Sidebar({ isCollapsed, toggleSidebar, rol }) {
             return (
               <li key={index} className="nav-item mb-2">
                 <div
-                  className="nav-link d-flex align-items-center justify-content-between text-dark cursor-pointer"
+                  className={`nav-link d-flex align-items-center justify-content-between ${
+                    isDark ? 'text-light' : 'text-dark'
+                  } cursor-pointer`}
                   onClick={() => toggleSection(item.label)}
                 >
                   <div className="d-flex align-items-center">
@@ -111,18 +110,22 @@ export default function Sidebar({ isCollapsed, toggleSidebar, rol }) {
                   )}
                 </div>
 
-                {/* Submenú con clase animada */}
                 <ul
-                  className={`nav flex-column ms-2 submenu ${isCollapsed ? 'closed' : isOpen ? 'open' : 'closed'}`}
+                  className={`nav flex-column ms-2 submenu ${
+                    isCollapsed ? 'closed' : isOpen ? 'open' : 'closed'
+                  }`}
                 >
                   {item.children.map((subItem, subIndex) => (
                     <li key={subIndex} className="sidebar-subitem">
                       <Link
                         to={subItem.path}
-                        className={`nav-link ${location.pathname === subItem.path
-                          ? 'active text-primary fw-bold'
-                          : 'text-dark'
-                          }`}
+                        className={`nav-link ${
+                          location.pathname === subItem.path
+                            ? 'active text-primary fw-bold'
+                            : isDark
+                            ? 'text-light'
+                            : 'text-dark'
+                        }`}
                       >
                         {subItem.label}
                       </Link>
@@ -136,10 +139,13 @@ export default function Sidebar({ isCollapsed, toggleSidebar, rol }) {
               <li key={index} className="nav-item mb-2">
                 <Link
                   to={item.path}
-                  className={`nav-link d-flex align-items-center ${location.pathname === item.path
-                    ? 'active text-primary fw-bold'
-                    : 'text-dark'
-                    }`}
+                  className={`nav-link d-flex align-items-center ${
+                    location.pathname === item.path
+                      ? 'active text-primary fw-bold'
+                      : isDark
+                      ? 'text-light'
+                      : 'text-dark'
+                  }`}
                   title={isCollapsed ? item.label : ''}
                 >
                   <i className={`bi ${item.icon} me-2 fs-5`} />

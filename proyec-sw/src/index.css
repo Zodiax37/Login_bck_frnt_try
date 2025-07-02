@@ -11,3 +11,156 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+/* === General === */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* === Modo Oscuro === */
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+/* === Navbar y Sidebar === */
+.dark-mode .bg-light {
+  background-color: #1e1e1e !important;
+  color: #f5f5f5 !important;
+  border-color: #333 !important;
+}
+
+.dark-mode .border-bottom,
+.dark-mode .border-end {
+  border-color: #333 !important;
+}
+
+/* === Tarjetas (InfoCard, .card, formularios) === */
+.dark-mode .card {
+  background-color: #1f1f1f;
+  color: #e0e0e0;
+  border: 1px solid #333;
+}
+
+.dark-mode .card .text-primary {
+  color: #79b8ff !important;
+}
+
+/* === Formularios === */
+.dark-mode .form-control,
+.dark-mode .form-select {
+  background-color: #2b2b2b;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+.dark-mode .form-control::placeholder {
+  color: #aaaaaa;
+}
+
+.dark-mode .form-check-label {
+  color: #cccccc;
+}
+
+/* Inputs en foco (evita blanco) */
+.dark-mode .form-control:focus,
+.dark-mode .form-select:focus {
+  background-color: #2b2b2b;
+  color: #ffffff;
+  border-color: #666;
+  box-shadow: none;
+}
+
+/* === Tablas === */
+.dark-mode .table {
+  background-color: #1e1e1e;
+  color: #f5f5f5;
+  border-color: #333;
+}
+
+.dark-mode .table thead {
+  background-color: #2c2c2c;
+  color: #ffffff;
+}
+
+.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+  background-color: #242424;
+}
+
+/* === Botones === */
+.dark-mode .btn-primary {
+  background-color: #4f5bd5;
+  border-color: #4f5bd5;
+}
+
+.dark-mode .btn-success {
+  background-color: #2e7d32;
+  border-color: #2e7d32;
+}
+
+.dark-mode .btn-info {
+  background-color: #0288d1;
+  border-color: #0288d1;
+  color: white;
+}
+
+.dark-mode .btn-outline-danger {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+.dark-mode .btn-outline-secondary {
+  color: #ccc;
+  border-color: #666;
+}
+
+/* === Links del sidebar === */
+.dark-mode .nav-link {
+  color: #cccccc !important;
+}
+
+.dark-mode .nav-link.active {
+  color: #79b8ff !important;
+}
+
+.dark-mode .nav-link:hover {
+  color: #ffffff !important;
+  background-color: #2a2a2a !important;
+}
+
+/* === Títulos y subtítulos legibles === */
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6,
+.dark-mode span,
+.dark-mode .text-muted,
+.dark-mode .fw-semibold {
+  color: #ffffff !important;
+}
+
+/* === Títulos y subtítulos legibles de usuarios === */
+.dark-mode .tabla-usuarios {
+  background-color: #1e1e1e;
+  color: #f5f5f5;
+  border-color: #333;
+}
+
+.dark-mode .tabla-usuarios thead {
+  background-color: #2c2c2c;
+  color: #ffffff;
+}
+
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+.dark-mode .tabla-usuarios.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #242424;
+}

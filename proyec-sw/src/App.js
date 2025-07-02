@@ -53,7 +53,19 @@ function App() {
     if (sidebarState !== null) {
       setSidebarAbierto(sidebarState === 'true');
     }
+
+
+    const config = JSON.parse(localStorage.getItem('configMotoMan'));
+    if (config?.tema === 'oscuro') {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+
   }, []);
+
+
+
 
   const toggleSidebar = () => {
     const nuevoEstado = !sidebarAbierto;
@@ -117,7 +129,7 @@ function App() {
                 <Route path="/usuarios" element={<Usuarios />} />
                 <Route path="crear-usuario" element={<CrearUserForm />} />
                 <Route path="usuarios/editar/:id" element={<UsuariosEditar />} />
-                
+
                 <Route path="/configuracion" element={<Configuracion />} />
                 <Route path='/productos/catalogo' element={<CatalogoProductos />} />
                 {/* <Route path="/preventa" element={<RegistrarProductoPage />} /> */}
@@ -126,17 +138,17 @@ function App() {
                 <Route path="/registrar-movimiento" element={<RegistrarMovimientoPage />} />
                 <Route path="/ventas/listado" element={<ListaVentas />} />
                 <Route path="/preventa" element={<PreventaPage />} />
-                
+
                 <Route path="/categorias/lista" element={<CategoriasLista />} />
-                
+
                 <Route path="/categorias/editar/:id" element={<CategoriaEditarPage />} />
 
                 <Route path="/categorias/registrar" element={<RegistrarCategoriaPage />} />
-                
+
                 <Route path="/proveedores/registrar" element={<RegistrarProveedorPage />} />
                 <Route path="/proveedores/lista" element={<ProveedorListaPage />} />
                 <Route path="/proveedores/editar/:id" element={<ProveedorEditarPage />} />
-                
+
                 <Route path="/empleados/Lista" element={<EmpleadosLista />} />
                 <Route path="/empleados/crear" element={<EmpleadoCrearPage />} />
                 <Route path="/empleados/editar/:id" element={<EmpleadoEditarPage />} />

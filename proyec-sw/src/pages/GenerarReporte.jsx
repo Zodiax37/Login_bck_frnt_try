@@ -1,3 +1,4 @@
+// src/pages/GenerarReporte.jsx
 import { useState } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
 import {
@@ -12,8 +13,13 @@ import {
 import {
   getVentasPorFecha,
   getProductosMasVendidos,
-  getStockBajo
+  getStockBajo,
 } from '../api/reportes';
+
+
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import * as XLSX from 'xlsx';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
@@ -24,6 +30,42 @@ export default function GenerarReporte() {
   const [fechaFin, setFechaFin] = useState('');
   const [dataGrafico, setDataGrafico] = useState(null);
   const [error, setError] = useState('');
+
+
+  // PDF
+  const exportarPDF = async () => {
+    const input = document.getElementById('reporte-contenedor');
+    const canvas = await html2canvas(input);
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF();
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.save(`reporte_${tipo}.pdf`);
+  };
+
+  // Excel
+  const exportarExcel = () => {
+    let rows = [];
+
+    if (dataGrafico.type === 'bar' || dataGrafico.type === 'pie') {
+      const labels = dataGrafico.data.labels;
+      const values = dataGrafico.data.datasets[0].data;
+
+      rows = labels.map((label, i) => ({
+        Nombre: label,
+        Valor: values[i],
+      }));
+    } else if (dataGrafico.type === 'info') {
+      rows = [{ Descripción: 'Productos bajo mínimo', Total: dataGrafico.data }];
+    }
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Reporte');
+    XLSX.writeFile(wb, `reporte_${tipo}.xlsx`);
+  };
 
   const handleGenerar = async (e) => {
     e.preventDefault();
@@ -68,7 +110,6 @@ export default function GenerarReporte() {
 
       } else if (tipo === 'Inventario bajo') {
         const datos = await getStockBajo();
-        // Asumimos que devuelve ProductosBajoMinimo
         const total = datos.ProductosBajoMinimo;
         setDataGrafico({
           type: 'info',
@@ -84,10 +125,10 @@ export default function GenerarReporte() {
   };
 
   return (
-    <div className="container p-4">
-      <h2 className="mb-4">Generar Reporte</h2>
+    <div className="container py-4">
+      <h2 className="mb-4 text-center">📊 Reporte del Sistema</h2>
 
-      <form className="row g-3 shadow bg-light p-4 rounded" onSubmit={handleGenerar}>
+      <form className="row g-3 shadow-sm bg-white p-4 rounded border" onSubmit={handleGenerar}>
         <div className="col-md-6">
           <label className="form-label">Fecha inicio</label>
           <input
@@ -125,7 +166,7 @@ export default function GenerarReporte() {
         </div>
 
         <div className="col-12 text-end">
-          <button type="submit" className="btn btn-info">Generar</button>
+          <button type="submit" className="btn btn-info">📈 Generar</button>
         </div>
       </form>
 
@@ -133,17 +174,37 @@ export default function GenerarReporte() {
 
       {mostrar && dataGrafico && (
         <div className="mt-5">
-          <h5 className="mb-3">Reporte: {tipo}</h5>
+          <div className="text-end mb-3">
+            <button className="btn btn-outline-primary me-2" onClick={exportarPDF}>📄 Exportar PDF</button>
+            <button className="btn btn-outline-success" onClick={exportarExcel}>📊 Exportar Excel</button>
+          </div>
 
-          {dataGrafico.type === 'bar' && <Bar data={dataGrafico.data} />}
-          {dataGrafico.type === 'pie' && <Pie data={dataGrafico.data} />}
-          {dataGrafico.type === 'info' && (
-            <div className="alert alert-warning">
-              Productos con inventario bajo mínimo: <strong>{dataGrafico.data}</strong>
+          <div id="reporte-contenedor" className="d-flex justify-content-center">
+            <div
+              className="shadow-sm p-4 border rounded bg-light"
+              style={{ maxWidth: '600px', width: '100%', height: '350px' }}
+            >
+              <h5 className="text-center mb-3">📋 Reporte: {tipo}</h5>
+              {dataGrafico.type === 'bar' && (
+                <div style={{ height: '250px' }}>
+                  <Bar data={dataGrafico.data} options={{ responsive: true, maintainAspectRatio: false }} />
+                </div>
+              )}
+              {dataGrafico.type === 'pie' && (
+                <div style={{ height: '250px' }}>
+                  <Pie data={dataGrafico.data} options={{ responsive: true, maintainAspectRatio: false }} />
+                </div>
+              )}
+              {dataGrafico.type === 'info' && (
+                <div className="alert alert-warning text-center fs-5 mt-4">
+                  Productos con inventario bajo mínimo: <strong>{dataGrafico.data}</strong>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       )}
+
     </div>
   );
 }

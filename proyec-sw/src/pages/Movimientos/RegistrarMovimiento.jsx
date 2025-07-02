@@ -39,23 +39,30 @@ const RegistrarMovimientoPage = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await RegistrarMovimiento(form);
-            alert("Movimiento registrado correctamente");
-            setForm({
-                ProductoId: "",
-                TipoMovimiento: "Entrada",
-                Cantidad: "",
-                Comentario: "",
-                UsuarioId: 1,
-            });
-            setProductoSeleccionado(null);
-        } catch (error) {
-            alert("Error al registrar el movimiento");
-            console.error(error);
+    e.preventDefault();
+    try {
+        const res = await RegistrarMovimiento(form);
+
+        if (res.notificacion) {
+            alert(`Movimiento registrado.\n⚠️ Alerta de stock bajo:\n${res.notificacion}`);
+        } else {
+            alert("Movimiento registrado correctamente.");
         }
-    };
+
+        setForm({
+            ProductoId: "",
+            TipoMovimiento: "Entrada",
+            Cantidad: "",
+            Comentario: "",
+            UsuarioId: localStorage.getItem("userId"),
+        });
+        setProductoSeleccionado(null);
+    } catch (error) {
+        alert("Error al registrar el movimiento");
+        console.error(error);
+    }
+};
+
 
     const productosFiltrados = productos.filter((p) =>
         p.Nombre.toLowerCase().includes(busqueda.toLowerCase())

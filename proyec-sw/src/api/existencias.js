@@ -10,7 +10,13 @@ export const obtenerExistencia = async (id) => {
     return res.data;
 };
 
-export const RegistrarMovimiento = async (data) => {
-    const res = await API.post('/existencias/registrar-movimiento', data);
+export async function RegistrarMovimiento(data) {
+    const token = localStorage.getItem('token');
+    const res = await API.post("/existencias/registrar-movimiento", data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
     return res.data;
-};
+}
+

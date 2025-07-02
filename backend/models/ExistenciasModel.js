@@ -4,7 +4,7 @@ const { get } = require("../routes/logRoutes");
 
 
 async function getMovimientos(role) {
-        const pool = await getConnectionByRole(role);
+    const pool = await getConnectionByRole(role);
     const result = await pool.request().query('EXEC sp_ListarMovimientosInventario');
     return result.recordset;
 }
@@ -14,7 +14,7 @@ async function getMovimientos(role) {
 
 
 async function getMovimiento(role, id) {
-        const pool = await getConnectionByRole(role);
+    const pool = await getConnectionByRole(role);
     const result = await pool.request().input("Id", sql.Int, id).query('EXEC sp_TraerMovimientoInventario @Id');
     return result.recordset;
 }
@@ -23,17 +23,30 @@ async function postMovimiento(role, data) {
     const { ProductoId, TipoMovimiento, Cantidad, Comentario, UsuarioId } = data;
 
     const pool = await getConnectionByRole(role);
-    await pool.request()
+    const result = await pool.request()
         .input("ProductoId", sql.Int, ProductoId)
         .input("TipoMovimiento", sql.NVarChar, TipoMovimiento)
         .input("Cantidad", sql.Int, Cantidad)
         .input("Comentario", sql.NVarChar, Comentario)
         .input("UsuarioId", sql.Int, UsuarioId)
         .query("EXEC sp_RegistrarMovimientoInventario @ProductoId, @TipoMovimiento, @Cantidad, @Comentario, @UsuarioId");
+
+    // Luego del SP, buscar si se creó una notificación
+    const notificaciones = await pool.request()
+        .input("ProductoId", sql.Int, ProductoId)
+        .query(`
+      SELECT TOP 1 N.Mensaje, P.Nombre AS NombreProducto
+      FROM Notificaciones N
+      INNER JOIN Productos P ON P.Id = N.ProductoId
+      WHERE ProductoId = @ProductoId
+      ORDER BY N.Id DESC
+    `);
+
+    return notificaciones.recordset[0] || null; // null si no se creó notificación
 }
 
 module.exports = {
-    getMovimientos,postMovimiento, getMovimiento
+    getMovimientos, postMovimiento, getMovimiento
 };
 
 
@@ -49,7 +62,7 @@ module.exports = {
 
 
 
-//#region 
+//#region
 
 // async function getExistencias(){
 //     const pool = await getConnection();

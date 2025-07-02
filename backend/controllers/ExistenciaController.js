@@ -1,4 +1,5 @@
 const ExistenciaModel = require("../models/ExistenciasModel")
+const { enviarCorreoNotificacion } = require("../utils/email");
 
 
 async function getAll(req, res){
@@ -20,15 +21,37 @@ async function getById(req, res) {
         res.status(500).json({ message: "Error al traer el Movimiento", error: e.message })
 
     }
-}
+ }
 
 async function createMovimiento(req, res) {
-    try {
-        await ExistenciaModel.postMovimiento(req.user.rol, req.body);
-        res.status(201).json({ message: "Movimiento registrado correctamente" });
-    } catch (e) {
-        res.status(500).json({ message: "Error al registrar el movimiento", error: e.message });
+  try {
+    const noti = await ExistenciaModel.postMovimiento(req.user.rol, req.body);
+
+    // Si se creó una notificación
+    if (noti) {
+      const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
+      const asunto = '📢 Alerta de Stock Bajo';
+      const mensajeHtml = `
+        <h3>⚠️ Alerta de Stock Bajo</h3>
+        <p>Producto: <strong>${noti.NombreProducto}</strong></p>
+        <p>Mensaje: ${noti.Mensaje}</p>
+      `;
+
+      await enviarCorreoNotificacion({ para: adminEmail, asunto, mensajeHtml });
     }
+
+    res.status(201).json({
+      message: "Movimiento registrado correctamente",
+      notificacion: noti ? noti.Mensaje : null,
+    });
+  } catch (e) {
+    console.error("Error en createMovimiento:", e);
+    console.log(e)
+    res.status(500).json({
+      message: "Error al registrar el movimiento",
+      error: e.message,
+    });
+  }
 }
 
 module.exports = { getAll,getById,createMovimiento };
