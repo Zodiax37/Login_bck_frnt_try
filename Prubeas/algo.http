@@ -36,6 +36,7 @@
 #   "Nombre": "CAamara",
 #   "Descripcion": "Graba y esas cosas"
 # }
+get http://localhost:3000/api/reportes/resumen-dash
 
 get http://localhost:3000/api/categorias
 

@@ -9,6 +9,7 @@ import { logout } from './utils/auth';
 
 import Home from './pages/Home';
 import RegistroProducto from './pages/RegistroProducto';
+import EditarProductoPage from './pages/EditarProductoPage';
 import IngresoInventario from './pages/IngresoInventario';
 import RegistrarVenta from './pages/RegistrarVenta';
 import GenerarReporte from './pages/GenerarReporte';
@@ -23,6 +24,22 @@ import ListaMovimientosInventario from './pages/Movimientos/ListaMovimientosInve
 import RegistrarMovimientoPage from './pages/Movimientos/RegistrarMovimiento';
 import RegistrarCategoriaPage from './pages/RegistrarCategoriaPage';
 import RegistrarProveedorPage from './pages/RegistrarProveedorPage';
+import UsuariosEditar from './pages/UsuariosEditar';
+import CategoriasLista from './pages/CategoriaLista';
+import ListaVentas from './pages/ListaVentas';
+import EmpleadoEditarPage from './pages/EmpleadoEditarPage';
+
+import EmpleadosLista from './pages/EmpleadosLista';
+import EmpleadoCrearPage from './pages/EmpleadoCrearpage';
+import ProveedorEditarPage from './pages/ProveedorEditarPage';
+
+import ProveedorListaPage from './pages/ProveedorListapage';
+
+
+import CategoriaEditarPage from './pages/CategoriaEditarPage';
+
+
+
 
 function App() {
   const [sidebarAbierto, setSidebarAbierto] = useState(true);
@@ -93,22 +110,36 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="productos/registrar-producto" element={<RegistroProducto />} />
+                <Route path="/productos/editar-producto/:id" element={<EditarProductoPage />} />
                 <Route path="/ingresar-inventario" element={<IngresoInventario />} />
                 <Route path="/registrar-venta" element={<RegistrarVenta />} />
                 <Route path="/reportes" element={<GenerarReporte />} />
                 <Route path="/usuarios" element={<Usuarios />} />
                 <Route path="crear-usuario" element={<CrearUserForm />} />
+                <Route path="usuarios/editar/:id" element={<UsuariosEditar />} />
+                
                 <Route path="/configuracion" element={<Configuracion />} />
                 <Route path='/productos/catalogo' element={<CatalogoProductos />} />
                 {/* <Route path="/preventa" element={<RegistrarProductoPage />} /> */}
                 <Route path="/seleccionar-preventa" element={<PreventasPendientes />} />
                 <Route path="/movimientos" element={<ListaMovimientosInventario />} />
                 <Route path="/registrar-movimiento" element={<RegistrarMovimientoPage />} />
+                <Route path="/ventas/listado" element={<ListaVentas />} />
                 <Route path="/preventa" element={<PreventaPage />} />
                 
-                <Route path="/categorias/registrar" element={<RegistrarCategoriaPage />} />
+                <Route path="/categorias/lista" element={<CategoriasLista />} />
+                
+                <Route path="/categorias/editar/:id" element={<CategoriaEditarPage />} />
 
+                <Route path="/categorias/registrar" element={<RegistrarCategoriaPage />} />
+                
                 <Route path="/proveedores/registrar" element={<RegistrarProveedorPage />} />
+                <Route path="/proveedores/lista" element={<ProveedorListaPage />} />
+                <Route path="/proveedores/editar/:id" element={<ProveedorEditarPage />} />
+                
+                <Route path="/empleados/Lista" element={<EmpleadosLista />} />
+                <Route path="/empleados/crear" element={<EmpleadoCrearPage />} />
+                <Route path="/empleados/editar/:id" element={<EmpleadoEditarPage />} />
 
 
 

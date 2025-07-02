@@ -9,6 +9,11 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import {
+  getVentasPorFecha,
+  getProductosMasVendidos,
+  getStockBajo
+} from '../api/reportes';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
@@ -17,45 +22,65 @@ export default function GenerarReporte() {
   const [mostrar, setMostrar] = useState(false);
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
+  const [dataGrafico, setDataGrafico] = useState(null);
+  const [error, setError] = useState('');
 
-  const handleGenerar = (e) => {
+  const handleGenerar = async (e) => {
     e.preventDefault();
-    setMostrar(true);
-  };
+    setMostrar(false);
+    setError('');
+    setDataGrafico(null);
 
-  // Datos simulados
-  const ventasPorDia = [1200, 1800, 1400, 1600, 2000, 2400, 3000];
-  const productosPopulares = [
-    { nombre: 'Aceite 2T', ventas: 50 },
-    { nombre: 'Cámara GoPro', ventas: 30 },
-    { nombre: 'Casco LS2', ventas: 20 },
-  ];
-  const stockBajo = [
-    { nombre: 'Candado antirrobo', cantidad: 2 },
-    { nombre: 'Filtro de aire', cantidad: 3 },
-    { nombre: 'Guantes', cantidad: 1 },
-  ];
+    try {
+      if (tipo === 'Ventas') {
+        const datos = await getVentasPorFecha(fechaInicio, fechaFin);
+        const fechas = datos.map(d => new Date(d.Fecha).toLocaleDateString());
+        const montos = datos.map(d => d.TotalFinalVentas);
 
-  const datosVentas = {
-    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-    datasets: [
-      {
-        label: 'Ventas por día (C$)',
-        data: ventasPorDia,
-        backgroundColor: '#0d6efd',
-      },
-    ],
-  };
+        setDataGrafico({
+          type: 'bar',
+          data: {
+            labels: fechas,
+            datasets: [{
+              label: 'Total vendido (C$)',
+              data: montos,
+              backgroundColor: '#0d6efd'
+            }]
+          }
+        });
 
-  const datosProductos = {
-    labels: productosPopulares.map(p => p.nombre),
-    datasets: [
-      {
-        label: 'Cantidad vendida',
-        data: productosPopulares.map(p => p.ventas),
-        backgroundColor: ['#ffc107', '#198754', '#dc3545'],
-      },
-    ],
+      } else if (tipo === 'Productos más vendidos') {
+        const datos = await getProductosMasVendidos(fechaInicio, fechaFin);
+        const nombres = datos.map(p => p.Producto);
+        const cantidades = datos.map(p => p.CantidadVendida);
+
+        setDataGrafico({
+          type: 'pie',
+          data: {
+            labels: nombres,
+            datasets: [{
+              label: 'Cantidad vendida',
+              data: cantidades,
+              backgroundColor: ['#0d6efd', '#198754', '#dc3545', '#ffc107', '#6f42c1']
+            }]
+          }
+        });
+
+      } else if (tipo === 'Inventario bajo') {
+        const datos = await getStockBajo();
+        // Asumimos que devuelve ProductosBajoMinimo
+        const total = datos.ProductosBajoMinimo;
+        setDataGrafico({
+          type: 'info',
+          data: total
+        });
+      }
+
+      setMostrar(true);
+    } catch (err) {
+      console.error(err);
+      setError('Error al obtener los datos del reporte.');
+    }
   };
 
   return (
@@ -81,7 +106,8 @@ export default function GenerarReporte() {
             className="form-control"
             value={fechaFin}
             onChange={(e) => setFechaFin(e.target.value)}
-            required
+            required={tipo !== 'Inventario bajo'}
+            disabled={tipo === 'Inventario bajo'}
           />
         </div>
 
@@ -103,28 +129,18 @@ export default function GenerarReporte() {
         </div>
       </form>
 
-      {/* Mostrar resultados */}
-      {mostrar && (
+      {error && <div className="alert alert-danger mt-4">{error}</div>}
+
+      {mostrar && dataGrafico && (
         <div className="mt-5">
           <h5 className="mb-3">Reporte: {tipo}</h5>
 
-          {tipo === 'Ventas' && (
-            <Bar data={datosVentas} />
-          )}
-
-          {tipo === 'Productos más vendidos' && (
-            <Pie data={datosProductos} />
-          )}
-
-          {tipo === 'Inventario bajo' && (
-            <ul className="list-group">
-              {stockBajo.map((item, idx) => (
-                <li key={idx} className="list-group-item d-flex justify-content-between">
-                  <span>{item.nombre}</span>
-                  <span className="badge bg-danger">{item.cantidad} unidades</span>
-                </li>
-              ))}
-            </ul>
+          {dataGrafico.type === 'bar' && <Bar data={dataGrafico.data} />}
+          {dataGrafico.type === 'pie' && <Pie data={dataGrafico.data} />}
+          {dataGrafico.type === 'info' && (
+            <div className="alert alert-warning">
+              Productos con inventario bajo mínimo: <strong>{dataGrafico.data}</strong>
+            </div>
           )}
         </div>
       )}

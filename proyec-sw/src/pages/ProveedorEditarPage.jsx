@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { crearProveedor } from '../api/proveedores';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { obtenerProveedor, actualizarProveedor } from '../api/proveedores';
 
-const RegistrarProveedorPage = () => {
+export default function ProveedorEditarPage() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+
     const [form, setForm] = useState({
         Nombre: '',
         Contacto: '',
@@ -11,8 +14,19 @@ const RegistrarProveedorPage = () => {
         Direccion: '',
         Estado: 'Activo'
     });
-    
-  const navigate = useNavigate();
+
+    useEffect(() => {
+        const cargarProveedor = async () => {
+            try {
+                const data = await obtenerProveedor(id);
+                setForm(data);
+            } catch (error) {
+                console.error(error);
+                alert('Error al cargar proveedor');
+            }
+        };
+        cargarProveedor();
+    }, [id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -22,25 +36,18 @@ const RegistrarProveedorPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await crearProveedor(form);
-            alert('Proveedor registrado correctamente');
-            setForm({
-                Nombre: '',
-                Contacto: '',
-                Plataforma: '',
-                Email: '',
-                Direccion: '',
-                Estado: 'Activo'
-            });
+            await actualizarProveedor(id, form);
+            alert('Proveedor actualizado correctamente');
+            navigate('/proveedores/lista'); // Ajusta si tu ruta final es distinta
         } catch (error) {
             console.error(error);
-            alert('Error al registrar proveedor');
+            alert('Error al actualizar proveedor');
         }
     };
 
     return (
         <div className="container mt-4">
-            <h2 className="mb-4">Registrar Proveedor</h2>
+            <h2 className="mb-4">Editar Proveedor</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label className="form-label">Nombre</label>
@@ -94,21 +101,12 @@ const RegistrarProveedorPage = () => {
                         value={form.Direccion}
                         onChange={handleChange}
                         className="form-control"
-                    ></textarea>
+                    />
                 </div>
 
-                <button type="submit" className="btn btn-primary">Registrar</button>
-                <button
-                    type="button"
-                    className="btn btn-outline-secondary mt-3"
-                    onClick={() => navigate('/proveedores/lista')}
-                >
-                    Ver Proveedores
-                </button>
-
+                <button type="submit" className="btn btn-primary me-2">Guardar Cambios</button>
+                <button type="button" className="btn btn-secondary" onClick={() => navigate('/proveedores/lista')}>Cancelar</button>
             </form>
         </div>
     );
-};
-
-export default RegistrarProveedorPage;
+}

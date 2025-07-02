@@ -3,7 +3,11 @@ const { getConnectionByRole, sql } = require("../connection");
 
 async function getProductos(role) {
     const pool = await getConnectionByRole(role);
-    const result = await pool.request().query('EXEC sp_ListarProductos');
+    const mostrarInactivos = role === 'admin' || role === 'inventario';
+    const result = await pool
+        .request()
+        .input('MostrarInactivos', sql.Bit, mostrarInactivos ? 1 : 0)
+        .query('EXEC sp_ListarProductos @MostrarInactivos');
     return result.recordset;
 }
 
@@ -31,17 +35,20 @@ async function postProducto(role, data) {
 
 async function updateProducto(role, id, data) {
     const pool = await getConnectionByRole(role);
-    const { Nombre, Descripcion, Costo, PrecioVenta, ImagenUrl, Estado,CategoriaId, ProveedorId } = data
-    await pool.request().input("Id", sql.Int, id)
-        .input("Nombre", sql.NVarChar, Nombre)
-        .input("Descripcion", sql.Text, Descripcion)
-        .input("Costo", sql.Decimal(10, 2), Costo)
-        .input("PrecioVenta", sql.Decimal(10, 2), PrecioVenta)
-        .input("ImgUrl", sql.NVarChar, ImagenUrl)
-        .input("Estado", sql.Bit, Estado)
-        .input("CategoriaId", sql.Int, CategoriaId)
-        .input("ProveedorId", sql.Int, ProveedorId)
-        .query("EXEC sp_ActualizarProducto @Id, @Nombre, @Descripcion, @Costo, @PrecioVenta, @ImgUrl, @Estado, @CategoriaId, @ProveedorId")
+    const { Nombre, Descripcion, Costo, PrecioVenta, ImagenURL, Estado, CategoriaId, ProveedorId, UmbralMinimo } = data;
+
+await pool.request()
+    .input("Id", sql.Int, id)
+    .input("Nombre", sql.NVarChar, Nombre)
+    .input("Descripcion", sql.Text, Descripcion)
+    .input("Costo", sql.Decimal(10, 2), Costo)
+    .input("PrecioVenta", sql.Decimal(10, 2), PrecioVenta)
+    .input("ImgUrl", sql.NVarChar, ImagenURL)
+    .input("Estado", sql.Bit, Estado)
+    .input("CategoriaId", sql.Int, CategoriaId)
+    .input("ProveedorId", sql.Int, ProveedorId)
+    .input("UmbralMinimo", sql.Int, UmbralMinimo)
+    .query("EXEC sp_ActualizarProducto @Id, @Nombre, @Descripcion, @Costo, @PrecioVenta, @ImgUrl, @Estado, @CategoriaId, @ProveedorId, @UmbralMinimo");
 }
 
 

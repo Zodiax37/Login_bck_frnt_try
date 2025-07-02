@@ -1,43 +1,93 @@
 import { useNavigate } from 'react-router-dom';
-
+import { useEffect, useState } from 'react';
+import { obtenerUsuarios, eliminarUsuario } from '../api/usuarios'; // ← IMPORTAR eliminarUsuario
 
 export default function Usuarios() {
-const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [usuarios, setUsuarios] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const usuarios = [
-    { id: 1, nombre: 'Juan Pérez', rol: 'Administrador', estado: 'Activo' },
-    { id: 2, nombre: 'María López', rol: 'Vendedor', estado: 'Inactivo' }
-  ]; // Luego esto vendrá de base de datos
+  const cargarUsuarios = async () => {
+    try {
+      const data = await obtenerUsuarios();
+      setUsuarios(data);
+    } catch (error) {
+      console.error('Error al cargar usuarios:', error);
+      alert('No se pudieron cargar los usuarios');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    cargarUsuarios();
+  }, []);
+
+  const handleEliminar = async (id) => {
+    if (!window.confirm('¿Deseas desactivar este usuario?')) return;
+    try {
+      await eliminarUsuario(id);
+      alert('Usuario desactivado correctamente');
+      await cargarUsuarios(); // recarga lista
+    } catch (error) {
+      console.error('Error al eliminar:', error);
+      alert('Error al eliminar usuario');
+    }
+  };
 
   return (
     <div className="container p-4">
       <div className="d-flex align-items-end flex-column bd-highlight mb-3">
-        <button className="btn btn-success" type="button" onClick={() => navigate('/crear-usuario')}>Añadir Usuario</button>
+        <button className="btn btn-success" onClick={() => navigate('/crear-usuario')}>
+          Añadir Usuario
+        </button>
       </div>
+
       <h2>Gestión de Usuarios</h2>
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Rol</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {usuarios.map(u => (
-            <tr key={u.id}>
-              <td>{u.nombre}</td>
-              <td>{u.rol}</td>
-              <td>{u.estado}</td>
-              <td>
-                <button className="btn btn-sm btn-warning me-2">Editar</button>
-                <button className="btn btn-sm btn-danger">Eliminar</button>
-              </td>
+
+      {loading ? (
+        <p>Cargando usuarios...</p>
+      ) : (
+        <table className="table table-striped">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Correo</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {usuarios.map((u) => (
+              <tr key={u.Id}>
+                <td>{u.Username}</td>
+                <td>{u.Nombre}</td>
+                <td>{u.Apellido}</td>
+                <td>{u.Correo}</td>
+                <td>{u.Rol}</td>
+                <td>{u.Estado ? 'Activo' : 'Inactivo'}</td>
+                <td>
+                  <button
+                    className="btn btn-sm btn-warning me-2"
+                    onClick={() => navigate(`/usuarios/editar/${u.Id}`)}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => handleEliminar(u.Id)}
+                  >
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }

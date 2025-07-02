@@ -60,8 +60,10 @@ async function erase_delete(req, res) {
     try {
         const id = parseInt(req.params.id)
         await UsuarioModel.deleteUsuario(req.user.rol, id)
-        res.json({message:"Usuario eliminada", error: e.message})
+        res.json({message:"Usuario eliminada"})
     } catch (e) {
+        console.log(e);
+        
         res.status(500).json({message:"Error al eliminar la Usuario", error: e.message})
 
     }

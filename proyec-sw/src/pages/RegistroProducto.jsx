@@ -45,7 +45,7 @@ const RegistrarProductoPage = () => {
     try {
       await crearProducto(form);
       alert('Producto registrado correctamente');
-      navigate('/productos/catalogo'); // O donde quieras redirigir
+      navigate('/productos/catalogo');
     } catch (error) {
       console.error(error);
       alert('Error al registrar producto');
@@ -53,97 +53,100 @@ const RegistrarProductoPage = () => {
   };
 
   return (
-    <div className="row container mt-4 justify-content-center">
-      <div className='col-8'>
-
-        <h2 className="mb-4">Registrar Producto</h2>
-        <form onSubmit={handleSubmit}>
+    <div className="container mt-4">
+      <h2 className="mb-4">Registrar Producto</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="row">
           {/* Nombre */}
-          <div className="mb-3">
+          <div className="col-md-6 mb-3">
             <label className="form-label">Nombre</label>
             <input type="text" name="Nombre" value={form.Nombre} onChange={handleChange} className="form-control" required />
           </div>
 
+          {/* Costo */}
+          <div className="col-md-3 mb-3">
+            <label className="form-label">Costo</label>
+            <input type="number" step="0.01" name="Costo" value={form.Costo} onChange={handleChange} className="form-control" required />
+          </div>
+
+          {/* Precio Venta */}
+          <div className="col-md-3 mb-3">
+            <label className="form-label">Precio Venta</label>
+            <input type="number" step="0.01" name="PrecioVenta" value={form.PrecioVenta} onChange={handleChange} className="form-control" required />
+          </div>
+
           {/* Descripción */}
-          <div className="mb-3">
+          <div className="col-12 mb-3">
             <label className="form-label">Descripción</label>
-            <textarea name="Descripcion" value={form.Descripcion} onChange={handleChange} className="form-control" />
+            <textarea name="Descripcion" value={form.Descripcion} onChange={handleChange} className="form-control" rows={2} />
           </div>
 
-
-          <div className='d-flex  align-content-center gap-3'>
-
-            {/* Costo */}
-            <div className="mb-3 me-5">
-              <label className="form-label">Costo</label>
-              <input type="number" step="0.01" name="Costo" value={form.Costo} onChange={handleChange} className="form-control" required />
-            </div>
-
-            {/* Precio de venta */}
-            <div className="mb-3 ms-5">
-              <label className="form-label">Precio de Venta</label>
-              <input type="number" step="0.01" name="PrecioVenta" value={form.PrecioVenta} onChange={handleChange} className="form-control" required />
-            </div>
-          </div>
-
-          {/* Imagen */}
-          <div className="mb-3">
-            <label className="form-label">URL de la Imagen</label>
+          {/* Imagen URL */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label">URL de Imagen</label>
             <input type="text" name="ImagenUrl" value={form.ImagenUrl} onChange={handleChange} className="form-control" />
+            {form.ImagenUrl && (
+              <div className="mt-2">
+                <img
+                  src={form.ImagenUrl}
+                  alt="Preview"
+                  style={{ maxHeight: '150px', objectFit: 'contain' }}
+                  className="img-fluid border rounded"
+                  onError={(e) => (e.target.style.display = 'none')}
+                />
+              </div>
+            )}
           </div>
 
-
-          <div className='d-flex  align-content-center gap-3'>
-            {/* Categoría */}
-            <div className="mb-3 me-5">
-              <label className="form-label d-flex justify-content-between">
-                <span>Categoría</span>
-                <button type="button" className="btn btn-sm btn-outline-primary me-5" onClick={() => navigate('/categorias/registrar')}>
-                  + Añadir Categoría
-                </button>
-              </label>
-              <select name="CategoriaId" value={form.CategoriaId} onChange={handleChange} className="form-select" required>
-                <option value="">Selecciona una categoría</option>
-                {categorias.map(cat => (
-                  <option key={cat.Id} value={cat.Id}>{cat.Nombre}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Proveedor */}
-            <div className="mb-3" ms-5>
-              <label className="form-label d-flex justify-content-between">
-                <span>Proveedor</span>
-                <button type="button" className="btn btn-sm btn-outline-primary ms-5" onClick={() => navigate('/proveedores/registrar')}>
-                  + Añadir Proveedor
-                </button>
-              </label>
-              <select name="ProveedorId" value={form.ProveedorId} onChange={handleChange} className="form-select" required>
-                <option value="">Selecciona un proveedor</option>
-                {proveedores.map(p => (
-                  <option key={p.Id} value={p.Id}>{p.Nombre}</option>
-                ))}
-              </select>
-            </div>
-
+          {/* Categoría */}
+          <div className="col-md-3 mb-3">
+            <label className="form-label d-flex justify-content-between">
+              <span>Categoría</span>
+              <button type="button" className="btn btn-sm btn-outline-primary" onClick={() => navigate('/categorias/registrar')}>
+                + Añadir
+              </button>
+            </label>
+            <select name="CategoriaId" value={form.CategoriaId} onChange={handleChange} className="form-select" required>
+              <option value="">Selecciona una</option>
+              {categorias.map(cat => (
+                <option key={cat.Id} value={cat.Id}>{cat.Nombre}</option>
+              ))}
+            </select>
           </div>
 
+          {/* Proveedor */}
+          <div className="col-md-3 mb-3">
+            <label className="form-label d-flex justify-content-between">
+              <span>Proveedor</span>
+              <button type="button" className="btn btn-sm btn-outline-primary" onClick={() => navigate('/proveedores/registrar')}>
+                + Añadir
+              </button>
+            </label>
+            <select name="ProveedorId" value={form.ProveedorId} onChange={handleChange} className="form-select" required>
+              <option value="">Selecciona uno</option>
+              {proveedores.map(p => (
+                <option key={p.Id} value={p.Id}>{p.Nombre}</option>
+              ))}
+            </select>
+          </div>
 
-          {/* Cantidad inicial */}
-          <div className="mb-3">
+          {/* Cantidad Inicial */}
+          <div className="col-md-3 mb-3">
             <label className="form-label">Cantidad Inicial</label>
             <input type="number" name="CantidadInicial" value={form.CantidadInicial} onChange={handleChange} className="form-control" required />
           </div>
 
-          {/* Umbral mínimo */}
-          <div className="mb-3">
+          {/* Umbral Mínimo */}
+          <div className="col-md-3 mb-3">
             <label className="form-label">Umbral Mínimo</label>
             <input type="number" name="UmbralMinimo" value={form.UmbralMinimo} onChange={handleChange} className="form-control" required />
           </div>
+        </div>
 
+        <div className="d-flex justify-content-end">
           <button type="submit" className="btn btn-success">Registrar Producto</button>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   );
 };

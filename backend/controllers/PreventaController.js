@@ -1,3 +1,4 @@
+
 const PreventaModel = require("../models/PreventaModel");
 
 async function crearPreventa(req, res) {
@@ -54,6 +55,45 @@ async function listarPreventasPendientes(req, res) {
 
 
 
+async function listarVentas(req, res) {
+    try {
+        const userId = req.usuarioId; // <--- usar el usuario autenticado
+        const ventas = await PreventaModel.getVentasGlobal(req.user.rol, userId);
+        console.log(ventas);
+        console.log(userId);
+
+        res.json(ventas);
+    } catch (e) {
+        console.log(e);
+
+        res.status(500).json({ message: "Error al listar todas las ventas", error: e.message });
+    }
+}
+
+
+async function listartVentasPorUser(req, res) {
+    try {
+        const userId = parseInt(req.params.usuarioId);
+        const ventas = await PreventaModel.getVentasPorUser(req.user.rol, userId);
+        res.json(ventas);
+    } catch (e) {
+        res.status(500).json({ message: "Error al listar ventas por usuario", error: e.message });
+    }
+}
+
+async function eliminarPreventa(req, res) {
+    try {
+        const preventaId = parseInt(req.params.preventaId); // ✅ de req.params, no body
+        await PreventaModel.deletePreventa(req.user.rol, preventaId);
+        res.json({ message: "Preventa eliminada correctamente" });
+    } catch (e) {
+        res.status(500).json({ message: "Error al eliminar Preventa/Carrito", error: e.message });
+    }
+}
+
+
+
+
 async function confirmarVenta(req, res) {
     try {
         const datos = {
@@ -64,7 +104,7 @@ async function confirmarVenta(req, res) {
         res.json({ message: "Venta confirmada exitosamente" });
     } catch (e) {
         console.log(e);
-        
+
         res.status(500).json({ message: "Error al confirmar venta", error: e.message });
     }
 }
@@ -75,5 +115,7 @@ module.exports = {
     quitarProducto,
     listarProductos,
     confirmarVenta,
-    listarPreventasPendientes
+    listarPreventasPendientes,
+    listarVentas,
+    listartVentasPorUser, eliminarPreventa
 };

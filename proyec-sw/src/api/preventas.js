@@ -36,6 +36,23 @@ export const obtenerPreventasPendientes = async (usuarioId) => {
     const res = await API.get(`/preventas/pendientes/${usuarioId}`);
     return res.data;
 };
+
+export const eliminarPreventa = async (id) => {
+    const res = await API.post(`/preventas/cancelar/${id}`);
+    return res.data;
+};
+
+// 
+export const obtenerVentas = async (usuarioId) => {
+    const url =`/preventas/ventas/${usuarioId}`;
+    console.log(url)
+    const res = await API.get(url);
+    return res.data;
+};
+
+
+
+
 // Confirmar una preventa y generar la venta
 export const confirmarVenta = async (data) => {
     const res = await API.post('/preventas/confirmar', data);

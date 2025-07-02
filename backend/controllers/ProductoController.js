@@ -3,6 +3,9 @@ const ProductoModel = require("../models/ProductoModel")
 async function getAll(req, res) {
     try {
         // const role = 'lector';  // Por ahora prueba así
+
+        console.log(req.user.rol);
+         
         const data = await ProductoModel.getProductos(req.user.rol);
         res.json(data);
     } catch (e) {

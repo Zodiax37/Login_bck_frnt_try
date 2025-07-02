@@ -43,6 +43,39 @@ async function listarPreventasPendientes(role, usuarioId) {
     return result.recordset;
 }
 
+async function deletePreventa(role, preventaId){
+    const pool = await getConnectionByRole(role)
+    await pool.request().input("PreventaId", sql.Int, preventaId)
+    .query("EXEC sp_EliminarPreventa @PreventaId");
+}
+
+
+
+
+async function getVentasGlobal(role, userId) {
+    const pool = await getConnectionByRole(role);
+    const result = await pool.request()
+    .input("userId", sql.Int, userId)
+        .query('EXEC sp_ListadoVentasGlobal @userId');
+    console.log(result);
+        
+    return result.recordset;
+}
+
+async function getVentasPorUser(role, usuarioId = null) {
+    const pool = await getConnectionByRole(role);
+    const result = await pool.request()
+        .input('UsuarioId', sql.Int, usuarioId)
+        .query('EXEC sp_ListadoVentasPorUsuario @UsuarioId');
+    console.log(result);
+        
+    return result.recordset;
+}
+
+
+
+
+
 async function confirmarVenta(role, data) {
     const { PreventaId, UsuarioId, MetodoPago, Descuento, TipoFactura } = data;
     const pool = await getConnectionByRole(role);
@@ -55,11 +88,17 @@ async function confirmarVenta(role, data) {
         .query("EXEC sp_ConfirmarVenta @PreventaId, @UsuarioId, @MetodoPago, @Descuento, @TipoFactura");
 }
 
+
+
+
 module.exports = {
     crearPreventa,
     agregarProducto,
     quitarProducto,
     listarProductos,
     confirmarVenta
-    ,listarPreventasPendientes
+    ,listarPreventasPendientes,
+    getVentasPorUser,
+    getVentasGlobal,
+    deletePreventa
 };

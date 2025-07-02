@@ -33,18 +33,26 @@ async function postUsuario(role, data){
     .query("EXEC sp_CrearUsuario @EmpleadoId, @Username, @PasswordH, @Rol")
 }
 
-async function updateUsuario(role, id, data){
+async function updateUsuario(role, id, data) {
     const pool = await getConnectionByRole(role);
-    const {Username, Password, Rol, Estado,EmpleadoId} = data
+    const { Username, Password, Rol, Estado, EmpleadoId } = data;
 
-    await pool.request().input("Id", sql.Int, id)
-    .input("Username", sql.NVarChar, Username)
-    .input("Password", sql.NVarChar, Password)
-    .input("Rol", sql.NVarChar, Rol)
-    .input("Estado", sql.Bit, Estado)
-    .input("EmpleadoId", sql.Int, EmpleadoId)
-    .query("EXEC sp_ActualizarUsuario @Id, @Username, @Password, @Rol, @Estado, @EmpleadoId")
-} 
+    let hashedPassword = Password;
+
+    // Si la contraseña es nueva (no está ya hasheada), la hashamos
+    if (!Password.startsWith('$2b$')) {
+        hashedPassword = await bcrypt.hash(Password, 10);
+    }
+
+    await pool.request()
+        .input("Id", sql.Int, id)
+        .input("Username", sql.NVarChar, Username)
+        .input("Password", sql.NVarChar, hashedPassword)
+        .input("Rol", sql.NVarChar, Rol)
+        .input("Estado", sql.Bit, Estado)
+        .input("EmpleadoId", sql.Int, EmpleadoId)
+        .query("EXEC sp_ActualizarUsuario @Id, @Username, @Password, @Rol, @Estado, @EmpleadoId");
+}
 
 async function deleteUsuario(role, Id){
     const pool = await getConnectionByRole(role);

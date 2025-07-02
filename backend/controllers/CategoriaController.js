@@ -53,8 +53,10 @@ async function erase_delete(req, res) {
     try {
         const id = parseInt(req.params.id)
         await CategoriaModel.deleteCategoria(req.user.rol, id)
-        res.json({message:"Categoria eliminada", error: e.message})
+        res.json({message:"Categoria eliminada"})
     } catch (e) {
+        console.log(e);
+        
         res.status(500).json({message:"Error al eliminar la categoria", error: e.message})
 
     }

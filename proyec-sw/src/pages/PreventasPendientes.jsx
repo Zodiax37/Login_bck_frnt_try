@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { obtenerPreventasPendientes } from '../api/preventas';
+import { obtenerPreventasPendientes, eliminarPreventa } from '../api/preventas';
 
 export default function SeleccionarPreventaPage() {
     const [preventas, setPreventas] = useState([]);
@@ -19,6 +19,22 @@ export default function SeleccionarPreventaPage() {
         };
         fetchPreventas();
     }, []);
+
+
+
+    const handleEliminarPreventa = async (id) => {
+        if (!window.confirm('¿Estás seguro de eliminar esta preventa?')) return;
+        try {
+            await eliminarPreventa(id);
+            setPreventas(prev => prev.filter(p => p.Id !== id));
+            alert('Preventa eliminada correctamente');
+            localStorage.removeItem('preventaId')
+        } catch (err) {
+            console.error('Error al eliminar preventa:', err);
+            alert('No se pudo eliminar la preventa');
+        }
+    };
+
 
     const seleccionarPreventa = (id) => {
         localStorage.setItem('preventaId', id);
@@ -48,12 +64,19 @@ export default function SeleccionarPreventaPage() {
                                     : 'Sin fecha'}</td>
                                 <td>
                                     <button
-                                        className="btn btn-primary btn-sm"
+                                        className="btn btn-primary btn-sm me-2"
                                         onClick={() => seleccionarPreventa(p.Id)}
                                     >
                                         Continuar
                                     </button>
+                                    <button
+                                        className="btn btn-danger btn-sm"
+                                        onClick={() => handleEliminarPreventa(p.Id)}
+                                    >
+                                        Eliminar
+                                    </button>
                                 </td>
+
                             </tr>
                         ))}
                     </tbody>

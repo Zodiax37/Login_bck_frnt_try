@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { crearCategoria } from '../api/categorias';
+import { useNavigate } from 'react-router-dom';
 
 const RegistrarCategoriaPage = () => {
   const [form, setForm] = useState({
     Nombre: '',
     Descripcion: ''
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,8 +51,10 @@ const RegistrarCategoriaPage = () => {
             className="form-control"
           />
         </div>
-
-        <button type="submit" className="btn btn-primary">Registrar</button>
+        <button type="submit" className="btn btn-primary me-2">Registrar</button>
+        <button type="button" className="btn btn-secondary" onClick={() => navigate('/categorias/lista')}>
+          Ver Categorías
+        </button>
       </form>
     </div>
   );

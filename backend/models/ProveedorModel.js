@@ -26,15 +26,14 @@ async function postProveedor(role, data){
 
 async function updateProveedor(role, Id, data){
     const pool = await getConnectionByRole(role);
-    const {Contacto, Estado, Nombre} = data
+    const { Contacto, Nombre, Plataforma, Email, Direccion } = data;
     await pool.request().input("Id", sql.Int, Id)
     .input("Contacto",sql.NVarChar,Contacto)
-    .input("Estado",sql.NVarChar , Estado)
     .input("Nombre", sql.NVarChar, Nombre)
     .input("Plataforma",sql.NVarChar,Plataforma)
     .input("Email", sql.NVarChar, Email)
     .input("Direccion", sql.Text, Direccion)
-    .query("EXEC sp_ActualizarProveedor @Nombre, @Contacto, @Plataforma, @Email, @Direccion")
+    .query("EXEC sp_ActualizarProveedor @Id, @Nombre, @Contacto, @Plataforma, @Email, @Direccion")
 } 
 
 

@@ -35,6 +35,8 @@ async function update(req, res){
         await ProveedorModels.updateProveedor(req.user.rol, id, req.body)
         res.json({message:"Proveedor actualizado correctamente"})
     } catch (e) {
+        console.log(e);
+        
         res.status(500).json({message:"Error al actualizar"}, e)
     }
 }

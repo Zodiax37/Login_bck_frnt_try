@@ -28,12 +28,22 @@ export default function Sidebar({ isCollapsed, toggleSidebar, rol }) {
             { label: 'Registrar Producto', path: '/productos/registrar-producto' }
           ]
           : []),
-        
+
+
         { label: 'Registrar Movimiento', path: '/registrar-movimiento' },
         { label: 'Movimientos', path: '/movimientos' }
-        
+
       ]
 
+    },
+
+    {
+      label: 'Productos',
+      icon: 'bi-box-seam',
+      roles: ['ventas'],
+      children: [
+        { label: 'Catálogo', path: '/productos/catalogo' }
+      ]
     },
     {
       label: 'Ventas',
@@ -41,7 +51,8 @@ export default function Sidebar({ isCollapsed, toggleSidebar, rol }) {
       roles: ['admin', 'ventas'],
       children: [
         { label: 'Mis Preventas', path: '/seleccionar-preventa' },
-        { label: 'Facturación', path: '/ventas/facturacion' }
+        { label: 'Mis Ventas', path: '/ventas/listado' },
+        { label: 'Facturación', path: '/preventa' }
       ]
     },
     {
@@ -56,8 +67,7 @@ export default function Sidebar({ isCollapsed, toggleSidebar, rol }) {
       roles: ['admin'],
       children: [
         { label: 'Usuarios', path: '/usuarios' },
-        { label: 'Empleados', path: '/empleados' },
-        { label: 'Personas', path: '/personas' }
+        { label: 'Empleados', path: '/empleados/lista' }
       ]
     },
     {
@@ -110,8 +120,8 @@ export default function Sidebar({ isCollapsed, toggleSidebar, rol }) {
                       <Link
                         to={subItem.path}
                         className={`nav-link ${location.pathname === subItem.path
-                            ? 'active text-primary fw-bold'
-                            : 'text-dark'
+                          ? 'active text-primary fw-bold'
+                          : 'text-dark'
                           }`}
                       >
                         {subItem.label}
@@ -127,8 +137,8 @@ export default function Sidebar({ isCollapsed, toggleSidebar, rol }) {
                 <Link
                   to={item.path}
                   className={`nav-link d-flex align-items-center ${location.pathname === item.path
-                      ? 'active text-primary fw-bold'
-                      : 'text-dark'
+                    ? 'active text-primary fw-bold'
+                    : 'text-dark'
                     }`}
                   title={isCollapsed ? item.label : ''}
                 >
